@@ -153,4 +153,62 @@ So:
 - This is why depth matters. More layers means more transformations means more complex problems the network can untangle, one step at a time.
 <br>
 
+# Deep Dive into Multi-Layer Perceptron
+# What information does a number need to carry so that we can later compute gradients automatically?
+Imagine you have an expression like:
+`f = (a * b) + c`
+If a, b, and c are ordinary Python numbers (floats), Python computes the answer and gives you a final number. But after that computation, all the history is gone. The number f doesn't know that it came from a multiplication and an addition, it doesn't know which numbers participated in those operations, and it has no way to answer questions like, "If I change a by a tiny amount, how much will f change?"
+<br>
+
+For automatic differentiation, we cannot use a normal floating point number- because we need every number to remember its: numerical value, its gradient, how it was produced, who produced it.
+So instead of storing plain floats, we store `Value` objects.
+<br>
+
+This is why we define `class Value`:
+<br>
+
+```
+def __init__(self, data, _children=(), _op=''):
+    self.data = data #actual numerical value (scalar)
+    self._prev=set(_children) #input nodes that produce this result (Backward perspective)
+    self._op=_op #operation string ('+', '*', etc)- operation that produced this node
+    self.grad = 0 #how sensitive the final output is to this node
+    self._backward=lambda:None
+```
+- Whenever a new instance (object) of the class is created- the `__init__` method is automatically invoked.
+- Parameter 1: `data`- this is the actual scalar
+- Parameter 2: `_children()`- this answers the question who created this object, this is the backward perspective, from the forward perspective it can be viewed as the parent node.
+- Parameter 3: `_op=''`-this answers the question: which operation produced this node
+- `_backward`: When backpropagation reaches a node, how does it know what derivatives to compute? Each node carries its own little derivative rule. This rule is stored in `self._backward`
+Initially it is initalized with `none` because leaf nodes are not produced by any operation. Later every node replaces the `none` with the respective derivative rule. This rule decides how is the gradient sent backward.
+-`grad`: it gives the answer to the question- how sensitive is the final output to this node?
+<br>
+
+A `Value` is a scalar that remembers both its past (how it was computed) and its future responsibility (how to propagate gradients).
+<br>
+
+# Local Gradients
+<b>1. Addition </b>
+<br>
+
+`c = a + b`
+<br>
+
+What do local gradients represent? Local Gradient represents the the sensitivity of an isolated operation's output to a tiny change in one of its immediate inputs.
+<br>
+
+For example- local gradient for `a` (input) will tell how sensitive is `c` (output) to `a`, which means if we nudge `a` by a tiny amount how would that affect `c`? This is calculated using partial derivative- which means we keep the other input variable constant- so that we can measure the isolated effect of `a` on `c`, otherwise it will be a combined effect and it would become complex to find how much did each input contribute to this change.
+<br>
+For addition, local derivatives are:
+```
+∂c/∂a = 1
+∂c/∂b = 1
+```
+This means that an addition node acts as a "gradient distributor." A nudge to any child node passes through to the parent node with 100% of its original strength, without being scaled or altered.
+<br>
+
+<b>2. Multiplication </b>
+<br>
+
+`c= a x b`
 
