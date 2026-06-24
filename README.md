@@ -16,6 +16,10 @@ A single neuron (a perceptron) can only create a single straight line as a decis
 
 Let's understand how an MLP would solve the XOR problem and draw the above classification.<br>
 We have four input pairs for the XOR gate: (0,0), (0,1), (1,0), (1,1).<br>
+
+<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/cf9bd4eb-3d5b-432a-a08a-bb4806a5664a" />
+<br>
+
 The hidden layer would have two neurons- to create the two decision boundaries and then the output layer would have one neuron which would give the final result.<br>
 The two neurons in the hidden layer- compute parallely. Both the hidden neurons receive the exact same inputs.
 - Hidden Neuron 1 multiplies them by its own set of weights and produces an output (Line 1).
@@ -113,7 +117,7 @@ Basically, the output neuron now has a linearly separable problem for itself to 
     </tbody>
 </table>
 
-<img width="500" alt="image" src="https://github.com/user-attachments/assets/df6dfa2e-6c92-4c7e-b233-d90c62ea74d7" />
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/216cf258-2632-4f43-9d2a-d566033c9aeb" />
 <br>
 
 The output neuron sees outputs of hidden as inputs. The 0s and 1s are now on opposite sides of one diagonal line. A single neuron can solve linearly separable data points and hence the problem is solved.
@@ -138,8 +142,15 @@ So:
 - That plot (band) = what the whole network learned mapped back to (x₁, x₂) — two lines combined
 <br>
 
-<b>Learning:<b>
+<b>How an MLP solves a non-linearly separable problem: </b>
 <br>
 
 - Classification means assigning labels to groups of data. Linearly separable classification is the special case where one line can separate those groups.
 - Non-linearly separable problems are still classification problems. They simply require multiple transformations and/or multiple boundaries before the classes can be separated.
+- A single neuron sees raw inputs and draws one line. That's all it can do. An MLP chains neurons into layers. The first hidden layer receives the raw inputs — but its outputs don't go to the answer. They go to the next layer as inputs. Each layer sees a transformed version of what the previous layer produced. The final output layer sees the most transformed version of all, and only then produces the answer.
+- This chaining is everything. Each layer doesn't just process data, it repackages it into a simpler problem. The next layer doesn't work on the original problem. It works on a simpler version of it, handed down by the previous layer.
+- The whole network shares one goal — the target output. But no single layer achieves it alone. The hidden layers aren't trying to classify; they're trying to produce a representation that makes classification easier for the layer after them.
+- This is why depth matters. More layers means more transformations means more complex problems the network can untangle, one step at a time.
+<br>
+
+
