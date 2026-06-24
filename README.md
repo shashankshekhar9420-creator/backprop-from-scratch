@@ -28,6 +28,44 @@ Lets further explore how the hidden layer neurons actually divide the space (som
 
 - Neuron 1: It draws the bottom line. It classifies everything above and to the right of this line (Green) as 1 and everything below this line (Purple) as 0. Thus, it successfully isolates the bottom-left point (0,0) into the Purple zone. But it incorrectly lumps the top-right point (1,1) into the Green zone.
 - Neuron 2: It draws the top line. It classifies everything below and to the left of this line (Green) as 1 and everything above this line (Purple) as 0. Thus, it successfully isolates the top-right-point (1,1) into the Purple zone. But it incorrectly lumps the bottom-left point (0,0) into the Green zone.
+
+<table>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Input 1</th>
+        <th>Input 2</th>
+        <th>Output of Neuron 1</th>
+        <th>Output of Neuron 2</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>0</td>
+        <td>1</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>0</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>0</td>
+      </tr>
+    </tbody>
+</table>
 <br>
 
 <table>
@@ -38,10 +76,70 @@ Lets further explore how the hidden layer neurons actually divide the space (som
 </table>
 <br>
 
-How the ouput neuron cleans it up- as of now both the neurons are making mistakes, individually. But when their outputs are sent into the output neuron, it performs AND operation. If a point lies in True zone for both the neurons then it is taken as True- in the Green zone, otherwise False- in the Purple zone.
+The outputs of the first layer become the inputs for the second layer (the output neuron).
+Basically, the output neuron now has a linearly separable problem for itself to solve.
 <br>
 
-The output neuron does not "know" that it has to perform AND operation. It arrives to that conclusion through backpropagation and gradient descent. We will explore these concepts later in this document.
+<table>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Input 1 (output of neuron 1)</th>
+        <th>Input 2 (output of neuron 2)</th>
+        <th>Target output: XOR</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>0</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>0</td>
+        <td>1</td>
+        <td>0</td>
+      </tr>
+    </tbody>
+</table>
+
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/df6dfa2e-6c92-4c7e-b233-d90c62ea74d7" />
 <br>
 
-Basically, the output neuron has a linearly separable problem for itself to solve. The problem for the output neuron has completely changed. 
+The output neuron sees outputs of hidden as inputs. The 0s and 1s are now on opposite sides of one diagonal line. A single neuron can solve linearly separable data points and hence the problem is solved.
+The hidden layer didn't just pass data through — it remapped 2D space into a new 2D space where the classes pulled apart. The output neuron inherits an easy problem.
+<br>
+
+The above graph doesn't resemble XOR- that is because the axes are no longer the original x₁ and x₂. They're outputs of the two hidden neurons. It's a completely different space.
+The diagonal line does separate them cleanly. It's not supposed to look like XOR — it's a transformed version of the problem that the output neuron can solve with one line.
+Green stops at the axes because x₁ and x₂ can only be 0 or 1 — they're neuron outputs (after activation), so valid coordinates only exist at the four corners: (0,0), (0,1), (1,0), (1,1).
+
+<br>
+
+<b>So what was the very first plot? </b>
+<br>
+
+That is the original XOR space (x₁, x₂) — not the hidden layer space. <br>
+
+That shows what the full MLP has learned, mapped back onto the original input space. The decision boundary is now a diagonal band (two lines from the two hidden neurons combined), which is non-linear — that's why it looks different from the simple triangle.
+The two hidden neurons each drew one line. The output neuron combined them. The result in original space = the overlap/band shape you see here.
+So:
+- Previous plot (triangle) = output neuron's view — simple one line
+- That plot (band) = what the whole network learned mapped back to (x₁, x₂) — two lines combined
+<br>
+
+<b>Learning:<b>
+<br>
+
+- Classification means assigning labels to groups of data. Linearly separable classification is the special case where one line can separate those groups.
+- Non-linearly separable problems are still classification problems. They simply require multiple transformations and/or multiple boundaries before the classes can be separated.
