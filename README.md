@@ -204,11 +204,46 @@ For addition, local derivatives are:
 ∂c/∂a = 1
 ∂c/∂b = 1
 ```
-This means that an addition node acts as a "gradient distributor." A nudge to any child node passes through to the parent node with 100% of its original strength, without being scaled or altered.
+This means that an addition node acts as a "gradient distributor." A nudge to any input node passes through to the immediate output node with 100% of its original strength, without being scaled or altered.
 <br>
 
 <b>2. Multiplication </b>
 <br>
 
 `c= a x b`
+The local derivative for a multiplication is always the value of the opposite input.This means a multiplication node acts as a "gradient switcher." The sensitivity of the immediate output node to one child depends entirely on the current value of the other child.
 
+For multiplication, local derivatives are:
+```
+∂c/∂a = b
+∂c/∂b = a
+```
+<br>
+
+<b>3. Power</b>
+For power, local derivative is:
+```
+d/dx (xⁿ) = n·xⁿ⁻¹
+```
+<br>
+
+## Chain Rule (How changes flow through computations)
+Consider:
+
+x ──► y ──► z
+
+Local derivatives:
+```
+∂y/∂x
+∂z/∂y
+```
+
+To determine how much x affects z, we multiply the local effects along the path:
+```
+∂z/∂x = (∂z/∂y) x (∂y/∂x)
+```
+
+The chain rule says that when a quantity affects an output indirectly through intermediate computations, its total influence equals the product of the local influences along the computational path.
+<br>
+
+The `∂` symbols are expressing sensitivities, and the multiplication arises because changes are being repeatedly amplified or diminished through successive computations.
